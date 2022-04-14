@@ -1,0 +1,76 @@
+from xlutils.copy import copy 
+import xlrd 
+import random 
+ 
+loc = ("C:\\code\\pj\\vocab.xls") 
+ 
+print('Lets start GAME!!! \nchoose 1-2-3-4') 
+ 
+rb = xlrd.open_workbook(loc) 
+wb = copy(rb) 
+sheet = wb.get_sheet(0) 
+sheets = rb.sheet_by_index(0) 
+point = 0 
+t = [] 
+ 
+while len(t) != sheets.nrows-1: 
+    c = [] 
+    i = 1 
+    que = int(random.randint(1, sheets.nrows-1)) 
+    cell0 = sheets.cell(int(que), 2) 
+    cell1 = sheets.cell(int(que), 1) 
+    if cell1.value not in t: 
+        stil = input('Play ? (y,no) : ') 
+        if stil == 'no': 
+            break 
+        c.append(cell0.value) 
+        print('Guest the words meaning : ',cell1.value) 
+         
+        while i < 4: 
+            que1 = int(random.randint(1, sheets.nrows-1)) 
+            if que1 != que: 
+                cell2 = sheets.cell(int(que1), 2) 
+                if cell2.value not in c: 
+                    c.append(cell2.value) 
+                    i+=1 
+                     
+        random.shuffle(c) 
+        for i in range(0, len(c)): 
+            print('%d.' %(i+1),c[i]) 
+            i += 1 
+             
+        ans = int(input('Your choice : ')) 
+        if c[ans-1] == cell0.value: 
+            point += 10 
+            print('\nWell done!\nYour score : %d\nYour score is growing! keep it up!' %point) 
+        elif point <= 10: 
+            point = 0 
+            print('\nBetter luck next time') 
+            print('Correct choice is : ', cell0.value) 
+            print('\nYour score : %d\nKeep going! YOU CAN DO IT!!!' %point) 
+        else: 
+            point -= 10 
+            print('\nBetter luck next time') 
+            print('Correct choice is : ', cell0.value) 
+            print('\nYour score : %d\nKeep going! YOU CAN DO IT!!!' %point) 
+        t.append(cell1.value) 
+     
+if point > int(sheets.cell(0, 3).value): 
+    if  len(t) == sheets.nrows-1: 
+        print('\nCongratulation, You finished all vocabulary') 
+        print('high score : %d' %int(sheets.cell(0, 3).value)) 
+        print('Your SUPA SCOREE : %d' %point) 
+        sheet.write(0, 3, '%d' %point) 
+    else: 
+        print('\nYou beat high score : %d' %int(sheets.cell(0, 3).value)) 
+        print('Your SUPA SCOREE : %d' %point) 
+        sheet.write(0, 3, '%d' %point)   
+else: 
+    if  len(t) == sheets.nrows-1: 
+        print('\nCongratulation, You finished all vocabulary') 
+        print('high score : %d' %int(sheets.cell(0, 3).value)) 
+        print('Your score : %d' %point) 
+    else: 
+        print('high score : %d' %int(sheets.cell(0, 3).value)) 
+        print('Your score : %d' %point) 
+wb.save('vocab.xls')
